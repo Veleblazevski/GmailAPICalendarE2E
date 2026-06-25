@@ -1,5 +1,3 @@
-(The file `c:\Users\Blazhevski\Desktop\AutomationEmailTask\readme` exists, but is empty)
-
 # AutomationEmailTask
 
 This repository contains a WebdriverIO + Cucumber TypeScript test project that automates Google Calendar invite creation, attendee response, and deletion.
