@@ -1,0 +1,86 @@
+(The file `c:\Users\Blazhevski\Desktop\AutomationEmailTask\readme` exists, but is empty)
+
+# AutomationEmailTask
+
+This repository contains a WebdriverIO + Cucumber TypeScript test project that automates Google Calendar invite creation, attendee response, and deletion.
+
+Follow the steps below to set up and run the project locally.
+
+## 1) Prerequisites
+
+- Node.js (LTS recommended)
+- Git
+- Chrome Browser compatible with the `chromedriver` version in `devDependencies` (chromedriver v149 at time of writing)
+
+## 2) Clone and install
+
+1. Clone the repo:
+
+```bash
+git clone <repo-url>
+cd AutomationEmailTask
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+## 3) Environment variables
+
+Create a local `.env` file from an example (do not commit `.env`):
+
+```bash
+cp .env.example .env
+# edit .env and add the required values
+```
+
+Required variables (minimum to run the tests with pre-generated tokens):
+
+- `ORGANIZER_CLIENT_ID`
+- `ORGANIZER_CLIENT_SECRET`
+- `ORGANIZER_REFRESH_TOKEN` (or generate via the flow below)
+- `ATTENDEE_CLIENT_ID`
+- `ATTENDEE_CLIENT_SECRET`
+- `ATTENDEE_REFRESH_TOKEN` (or generate via the flow below)
+
+If you don't have refresh tokens, see step 5.
+
+## 4) Run the test suite
+
+Start the WebdriverIO suite locally:
+
+```bash
+npm run wdio
+```
+
+Notes:
+
+- The runner uses headless Chrome and spawns `chromedriver` automatically.
+- We set `logLevel: "silent"` in `wdio.conf.ts` to keep output concise.
+
+## 5) Generating OAuth tokens (interactive)
+
+Only required if you don't have valid `refresh_token` values in `.env`.
+
+You will need to use 2 gmail accounts for this script: One as the organizer and one as the attendee
+You will need to set up the gmail calendar API and auth organizer and attendie to use this sciprt
+Easiest explanation from this video: https://www.youtube.com/watch?v=8DPTr6Z3u1k&t=1665s
+
+1. Run the token generator script for the role you need (organizer or attendee):
+
+```bash
+npx tsx auth/oAuth/generateAuthCode.ts attendee
+# or
+npx tsx auth/oAuth/generateAuthCode.ts organizer
+```
+
+2. Follow the printed URL and consent flow, then paste the returned authorization code into the script.
+3. The script updates `.env` with the `ACCESS_TOKEN`, `REFRESH_TOKEN`, and `EXPIRY_DATE` values.
+
+If the `REFRESH_TOKEN` is present, the Google OAuth2 client will automatically refresh access tokens when they expire.
+
+## 6) Token persistence (recommended)
+
+To persist refreshed tokens automatically across runs, we recommend enabling token persistence in `auth/googleAuth.ts`. This listens for the OAuth client `tokens` event and writes updates to `.env`.

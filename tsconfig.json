@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "module": "ESNext",
+        "target": "es2022",
+        "lib": [
+            "es2022",
+            "dom"
+        ],
+        "types": [
+            "node",
+            "@wdio/cucumber-framework"
+        ],
+        "skipLibCheck": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "ignoreDeprecations": "6.0"
+    },
+    "include": [
+        "test",
+        "wdio.conf.ts",
+        "features"
+, "auth"    ]
+}
