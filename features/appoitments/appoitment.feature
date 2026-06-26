@@ -3,7 +3,13 @@ Feature: Appoitment loop meeting
     Given As organizer I want to send a ISC invite
     Then As organizer I want to validated the ISC event is created
     When As attendee I receive the ISC invite
-    Then As attendee I want to respond to the invite with "declined"
+    Then As attendee I want to respond to the invite with "<response>"
+    Then As organizer I validate the ICS contains the proper response
     Then As organizer I remove the event from the calendar
     Then As organizer I want to validated the ISC event is deleted
 
+    Examples:
+      | response  |
+      | declined  |
+      # | accepted  |
+      # | tentative |

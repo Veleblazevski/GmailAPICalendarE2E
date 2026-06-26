@@ -2,7 +2,7 @@
 
 # AutomationEmailTask
 
-This repository contains a WebdriverIO + Cucumber TypeScript test project that automates Google Calendar invite creation, attendee response, and deletion.
+This repository contains a WebdriverIO + Cucumber TypeScript test project that automates Google Calendar invite creation, attendee response,ICS generation and deletion.
 
 Follow the steps below to set up and run the project locally.
 

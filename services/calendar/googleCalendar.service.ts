@@ -1,5 +1,6 @@
 import { organizerCalendar, attendeeCalendar } from "../../clients/google/calendarClient";
 import { ensureDefined } from "../../utils/errorHandling";
+import { exportEventAsICS } from "../../utils/icsExport";
 
 //Create a ISC event in the calendar
 export async function createISCEvent() {
@@ -15,6 +16,16 @@ export async function createISCEvent() {
   });
 
   console.log("Event is created and user is invited");
+
+  // Export organizer event as ICS for comparison
+  if (result.data.id) {
+    try {
+      await exportEventAsICS(result.data.id, "organizer");
+    } catch (error) {
+      console.warn("Failed to export organizer ICS:", error);
+    }
+  }
+
   return result;
 }
 
@@ -67,6 +78,13 @@ export async function attendeeRespondToInvite(eventId: string | undefined, respo
   });
 
   console.log("User responded to the invite");
+
+  // Export attendee event as ICS after responding for comparison
+  try {
+    await exportEventAsICS(eventIdValue, "attendee");
+  } catch (error) {
+    console.warn("Failed to export attendee ICS:", error);
+  }
 }
 
 //Delete event from the organizer's calendar
