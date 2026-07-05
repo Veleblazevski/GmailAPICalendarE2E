@@ -33,10 +33,7 @@ export function loadEnvFile(envPath: string) {
     const name = line.slice(0, assignIndex).trim();
     let value = line.slice(assignIndex + 1).trim();
 
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }
 
