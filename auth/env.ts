@@ -40,7 +40,7 @@ export function loadEnvFile(envPath: string) {
       value = value.slice(1, -1);
     }
 
-    env[name] = value;
+    env[name] = process.env[name] ?? value;
     if (process.env[name] === undefined) {
       process.env[name] = value;
     }
