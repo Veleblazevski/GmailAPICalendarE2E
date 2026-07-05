@@ -117,29 +117,7 @@ pipeline {
           def passRate = total > 0 ? ((passed * 100) / total).intValue() : 100
           def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
           def executionStatus = 'passed'
-          def message = """Hello your test results came in...
-TEST ENV
-Jenkins build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-Branch: ${branchName}
-
-TEST STATISTICS
-Test pass rate: ${passRate}%
-Passed: ${passed}
-Failed: ${failed}
-Unknown: 0
-Skipped: 0
-
-STEP STATISTICS
-Step pass rate: ${passRate}%
-Passed: ${passed}
-Failed: ${failed}
-Skipped: 0
-
-Execution: ${executionStatus}
-
-Jenkins job link: ${env.BUILD_URL}
-Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
-"""
+          def message = "Hello your test results came in...\\nTEST ENV\\nJenkins build: ${env.JOB_NAME} #${env.BUILD_NUMBER}\\nBranch: ${branchName}\\n\\nTEST STATISTICS\\nTest pass rate: ${passRate}%\\nPassed: ${passed}\\nFailed: ${failed}\\nUnknown: 0\\nSkipped: 0\\n\\nSTEP STATISTICS\\nStep pass rate: ${passRate}%\\nPassed: ${passed}\\nFailed: ${failed}\\nSkipped: 0\\n\\nExecution: ${executionStatus}\\n\\nJenkins job link: ${env.BUILD_URL}\\nCucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html"
 
           def payload = JsonOutput.toJson([text: message])
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
@@ -181,29 +159,7 @@ Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
           def passRate = total > 0 ? ((passed * 100) / total).intValue() : 100
           def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
           def executionStatus = 'failed'
-          def message = """Hello your test results came in...
-TEST ENV
-Jenkins build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
-Branch: ${branchName}
-
-TEST STATISTICS
-Test pass rate: ${passRate}%
-Passed: ${passed}
-Failed: ${failed}
-Unknown: 0
-Skipped: 0
-
-STEP STATISTICS
-Step pass rate: ${passRate}%
-Passed: ${passed}
-Failed: ${failed}
-Skipped: 0
-
-Execution: ${executionStatus}
-
-Jenkins job link: ${env.BUILD_URL}
-Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
-"""
+          def message = "Hello your test results came in...\\nTEST ENV\\nJenkins build: ${env.JOB_NAME} #${env.BUILD_NUMBER}\\nBranch: ${branchName}\\n\\nTEST STATISTICS\\nTest pass rate: ${passRate}%\\nPassed: ${passed}\\nFailed: ${failed}\\nUnknown: 0\\nSkipped: 0\\n\\nSTEP STATISTICS\\nStep pass rate: ${passRate}%\\nPassed: ${passed}\\nFailed: ${failed}\\nSkipped: 0\\n\\nExecution: ${executionStatus}\\n\\nJenkins job link: ${env.BUILD_URL}\\nCucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html"
 
           def payload = JsonOutput.toJson([text: message])
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
