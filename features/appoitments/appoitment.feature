@@ -10,6 +10,6 @@ Feature: Appoitment loop meeting
 
     Examples:
       | response  |
-      | declined  |
-      # | accepted  |
+      # | declined  |
+      | accepted  |
       # | tentative |

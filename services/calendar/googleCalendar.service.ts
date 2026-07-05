@@ -2,6 +2,12 @@ import { organizerCalendar, attendeeCalendar } from "../../clients/google/calend
 import { ensureDefined } from "../../utils/errorHandling";
 import { exportEventAsICS } from "../../utils/icsExport";
 
+// function getFutureDateTime(hoursAhead: number, minutesAhead: number): string {
+//   const date = new Date();
+//   date.setUTCHours(date.getUTCHours() + hoursAhead, date.getUTCMinutes() + minutesAhead);
+//   return date.toISOString();
+// }
+
 //Create a ISC event in the calendar
 export async function createISCEvent() {
   const result = await organizerCalendar.events.insert({
@@ -9,8 +15,10 @@ export async function createISCEvent() {
     sendUpdates: "all",
     requestBody: {
       summary: "WDIO Gmail RSVP Test",
-      start: { dateTime: "2026-07-01T14:00:00Z" },
-      end: { dateTime: "2026-07-01T15:00:00Z" },
+      start: { dateTime: "2026-07-08T14:00:00Z" },
+      end: { dateTime: "2026-07-08T15:00:00Z" },
+      // start: { dateTime: getFutureDateTime(1, 30) },
+      // end: { dateTime: getFutureDateTime(2, 30) },
       attendees: [{ email: "aattendie@gmail.com" }],
     },
   });
