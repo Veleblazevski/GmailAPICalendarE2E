@@ -43,10 +43,24 @@ pipeline {
             output = readFile(file: 'test-output.txt')
           }
 
-          def passingMatches = (output =~ /(?<!\d)(\d+)\s+passing/).findAll()
-          def failingMatches = (output =~ /(?<!\d)(\d+)\s+failing/).findAll()
-          def passed = passingMatches ? passingMatches[-1][1].toInteger() : 0
-          def failed = failingMatches ? failingMatches[-1][1].toInteger() : 0
+          def passed = 0
+          def failed = 0
+          if (output.contains('passing')) {
+            def passingIndex = output.indexOf('passing')
+            def passingPart = output.substring(0, passingIndex)
+            def passingNumber = (passingPart =~ /\d+/)
+            if (passingNumber) {
+              passed = passingNumber[0].toInteger()
+            }
+          }
+          if (output.contains('failing')) {
+            def failingIndex = output.indexOf('failing')
+            def failingPart = output.substring(0, failingIndex)
+            def failingNumber = (failingPart =~ /\d+/)
+            if (failingNumber) {
+              failed = failingNumber[0].toInteger()
+            }
+          }
           def summary = "Tests: ${passed} passed, ${failed} failed"
           def payload = JsonOutput.toJson([text: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n${summary}"])
 
@@ -66,10 +80,24 @@ pipeline {
             output = readFile(file: 'test-output.txt')
           }
 
-          def passingMatches = (output =~ /(?<!\d)(\d+)\s+passing/).findAll()
-          def failingMatches = (output =~ /(?<!\d)(\d+)\s+failing/).findAll()
-          def passed = passingMatches ? passingMatches[-1][1].toInteger() : 0
-          def failed = failingMatches ? failingMatches[-1][1].toInteger() : 0
+          def passed = 0
+          def failed = 0
+          if (output.contains('passing')) {
+            def passingIndex = output.indexOf('passing')
+            def passingPart = output.substring(0, passingIndex)
+            def passingNumber = (passingPart =~ /\d+/)
+            if (passingNumber) {
+              passed = passingNumber[0].toInteger()
+            }
+          }
+          if (output.contains('failing')) {
+            def failingIndex = output.indexOf('failing')
+            def failingPart = output.substring(0, failingIndex)
+            def failingNumber = (failingPart =~ /\d+/)
+            if (failingNumber) {
+              failed = failingNumber[0].toInteger()
+            }
+          }
           def summary = "Tests: ${passed} passed, ${failed} failed"
           def payload = JsonOutput.toJson([text: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n${summary}"])
 
