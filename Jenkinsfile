@@ -143,7 +143,7 @@ Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
 
           def payload = JsonOutput.toJson([text: message])
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
-            bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"${payload}\" %SLACK_WEBHOOK%"
+            bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"${payload}\" \"%SLACK_WEBHOOK%\""
           }
         } catch (Exception e) {
           echo "Slack notification skipped or failed: ${e.getMessage()}"
@@ -207,7 +207,7 @@ Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
 
           def payload = JsonOutput.toJson([text: message])
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
-            bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"${payload}\" %SLACK_WEBHOOK%"
+            bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"${payload}\" \"%SLACK_WEBHOOK%\""
           }
         } catch (Exception e) {
           echo "Slack notification skipped or failed: ${e.getMessage()}"
