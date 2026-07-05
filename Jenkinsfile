@@ -57,7 +57,7 @@ pipeline {
           }
 
           def total = passed + failed
-          def passRate = total > 0 ? Math.round((passed * 100) / total) : 100
+          def passRate = total > 0 ? ((passed * 100) / total).intValue() : 100
           def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
           def executionStatus = currentBuild.currentResult == 'SUCCESS' ? 'passed' : 'failed'
 
@@ -114,7 +114,7 @@ pipeline {
           }
 
           def total = passed + failed
-          def passRate = total > 0 ? Math.round((passed * 100) / total) : 100
+          def passRate = total > 0 ? ((passed * 100) / total).intValue() : 100
           def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
           def executionStatus = 'passed'
           def message = """Hello your test results came in...
@@ -178,7 +178,7 @@ Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
           }
 
           def total = passed + failed
-          def passRate = total > 0 ? Math.round((passed * 100) / total) : 100
+          def passRate = total > 0 ? ((passed * 100) / total).intValue() : 100
           def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
           def executionStatus = 'failed'
           def message = """Hello your test results came in...
