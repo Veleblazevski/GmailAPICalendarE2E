@@ -35,10 +35,7 @@ pipeline {
       script {
         try {
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
-            slackSend channel: '#builds',
-                      color: 'good',
-                      message: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                      token: env.SLACK_WEBHOOK
+            bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"{\\\"text\\\":\\\"Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\\\"}\" %SLACK_WEBHOOK%"
           }
         } catch (Exception e) {
           echo "Slack notification failed: ${e.getMessage()}"
@@ -49,10 +46,7 @@ pipeline {
       script {
         try {
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
-            slackSend channel: '#builds',
-                      color: 'danger',
-                      message: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                      token: env.SLACK_WEBHOOK
+            bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"{\\\"text\\\":\\\"Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\\\"}\" %SLACK_WEBHOOK%"
           }
         } catch (Exception e) {
           echo "Slack notification failed: ${e.getMessage()}"
