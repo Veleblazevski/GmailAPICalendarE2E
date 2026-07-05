@@ -8,13 +8,13 @@ pipeline {
   stages {
     stage('Install dependencies') {
       steps {
-        sh 'npm install'
+        bat 'npm install'
       }
     }
 
     stage('Run WebdriverIO tests') {
       steps {
-        sh 'npm run wdio'
+        bat 'npm run wdio'
       }
     }
   }
