@@ -32,10 +32,20 @@ pipeline {
       echo 'Pipeline finished.'
     }
     success {
-      echo 'Build succeeded.'
+      withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+        slackSend channel: '#builds',
+                  color: 'good',
+                  message: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                  token: env.SLACK_WEBHOOK
+      }
     }
     failure {
-      echo 'Build failed.'
+      withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+        slackSend channel: '#builds',
+                  color: 'danger',
+                  message: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                  token: env.SLACK_WEBHOOK
+      }
     }
   }
 }
