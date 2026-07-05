@@ -25,7 +25,58 @@ pipeline {
     stage('Run WebdriverIO tests') {
       steps {
         script {
-          bat 'npm run wdio > test-output.txt 2>&1'
+          def status = bat(script: 'npm run wdio > test-output.txt 2>&1', returnStatus: true)
+          echo "WDIO exit code: ${status}"
+
+          if (status != 0) {
+            currentBuild.result = 'FAILURE'
+          }
+
+          def output = ''
+          if (fileExists('test-output.txt')) {
+            output = readFile(file: 'test-output.txt')
+          }
+
+          def passed = 0
+          def failed = 0
+
+          def passingLine = output.split('\n').find { it.contains('passing') }
+          if (passingLine) {
+            def passingNumber = (passingLine =~ /\d+/)
+            if (passingNumber) {
+              passed = passingNumber[0].toInteger()
+            }
+          }
+
+          def failingLine = output.split('\n').find { it.contains('failing') }
+          if (failingLine) {
+            def failingNumber = (failingLine =~ /\d+/)
+            if (failingNumber) {
+              failed = failingNumber[0].toInteger()
+            }
+          }
+
+          def total = passed + failed
+          def passRate = total > 0 ? Math.round((passed * 100) / total) : 100
+          def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
+          def executionStatus = currentBuild.currentResult == 'SUCCESS' ? 'passed' : 'failed'
+
+          def html = """
+          <html>
+            <body style="font-family:Arial,sans-serif; padding:16px;">
+              <h2>Cucumber Test Summary</h2>
+              <p><strong>Build:</strong> ${env.JOB_NAME} #${env.BUILD_NUMBER}</p>
+              <p><strong>Branch:</strong> ${branchName}</p>
+              <p><strong>Execution:</strong> ${executionStatus}</p>
+              <p><strong>Passed:</strong> ${passed}</p>
+              <p><strong>Failed:</strong> ${failed}</p>
+              <p><strong>Pass rate:</strong> ${passRate}%</p>
+            </body>
+          </html>
+          """
+
+          writeFile file: 'cucumber-summary.html', text: html
+          archiveArtifacts artifacts: 'cucumber-summary.html,test-output.txt', allowEmptyArchive: true
         }
       }
     }
@@ -45,25 +96,52 @@ pipeline {
 
           def passed = 0
           def failed = 0
-          if (output.contains('passing')) {
-            def passingIndex = output.indexOf('passing')
-            def passingPart = output.substring(0, passingIndex)
-            def passingNumber = (passingPart =~ /\d+/)
+
+          def passingLine = output.split('\n').find { it.contains('passing') }
+          if (passingLine) {
+            def passingNumber = (passingLine =~ /\d+/)
             if (passingNumber) {
               passed = passingNumber[0].toInteger()
             }
           }
-          if (output.contains('failing')) {
-            def failingIndex = output.indexOf('failing')
-            def failingPart = output.substring(0, failingIndex)
-            def failingNumber = (failingPart =~ /\d+/)
+
+          def failingLine = output.split('\n').find { it.contains('failing') }
+          if (failingLine) {
+            def failingNumber = (failingLine =~ /\d+/)
             if (failingNumber) {
               failed = failingNumber[0].toInteger()
             }
           }
-          def summary = "Tests: ${passed} passed, ${failed} failed"
-          def payload = JsonOutput.toJson([text: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n${summary}"])
 
+          def total = passed + failed
+          def passRate = total > 0 ? Math.round((passed * 100) / total) : 100
+          def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
+          def executionStatus = 'passed'
+          def message = """Hello your test results came in...
+TEST ENV
+Jenkins build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Branch: ${branchName}
+
+TEST STATISTICS
+Test pass rate: ${passRate}%
+Passed: ${passed}
+Failed: ${failed}
+Unknown: 0
+Skipped: 0
+
+STEP STATISTICS
+Step pass rate: ${passRate}%
+Passed: ${passed}
+Failed: ${failed}
+Skipped: 0
+
+Execution: ${executionStatus}
+
+Jenkins job link: ${env.BUILD_URL}
+Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
+"""
+
+          def payload = JsonOutput.toJson([text: message])
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
             bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"${payload}\" %SLACK_WEBHOOK%"
           }
@@ -82,25 +160,52 @@ pipeline {
 
           def passed = 0
           def failed = 0
-          if (output.contains('passing')) {
-            def passingIndex = output.indexOf('passing')
-            def passingPart = output.substring(0, passingIndex)
-            def passingNumber = (passingPart =~ /\d+/)
+
+          def passingLine = output.split('\n').find { it.contains('passing') }
+          if (passingLine) {
+            def passingNumber = (passingLine =~ /\d+/)
             if (passingNumber) {
               passed = passingNumber[0].toInteger()
             }
           }
-          if (output.contains('failing')) {
-            def failingIndex = output.indexOf('failing')
-            def failingPart = output.substring(0, failingIndex)
-            def failingNumber = (failingPart =~ /\d+/)
+
+          def failingLine = output.split('\n').find { it.contains('failing') }
+          if (failingLine) {
+            def failingNumber = (failingLine =~ /\d+/)
             if (failingNumber) {
               failed = failingNumber[0].toInteger()
             }
           }
-          def summary = "Tests: ${passed} passed, ${failed} failed"
-          def payload = JsonOutput.toJson([text: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}\n${summary}"])
 
+          def total = passed + failed
+          def passRate = total > 0 ? Math.round((passed * 100) / total) : 100
+          def branchName = (env.GIT_BRANCH ?: 'unknown').replaceFirst(/^origin\//, '')
+          def executionStatus = 'failed'
+          def message = """Hello your test results came in...
+TEST ENV
+Jenkins build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Branch: ${branchName}
+
+TEST STATISTICS
+Test pass rate: ${passRate}%
+Passed: ${passed}
+Failed: ${failed}
+Unknown: 0
+Skipped: 0
+
+STEP STATISTICS
+Step pass rate: ${passRate}%
+Passed: ${passed}
+Failed: ${failed}
+Skipped: 0
+
+Execution: ${executionStatus}
+
+Jenkins job link: ${env.BUILD_URL}
+Cucumber report link: ${env.BUILD_URL}artifact/cucumber-summary.html
+"""
+
+          def payload = JsonOutput.toJson([text: message])
           withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
             bat "curl.exe -X POST -H \"Content-type: application/json\" --data \"${payload}\" %SLACK_WEBHOOK%"
           }
